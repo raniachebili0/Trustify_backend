@@ -1,19 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document , SchemaTypes, Types } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 @Schema()
 export class User extends Document {
   @Prop({ required: true, unique: true })
   email: string;
-  @Prop({ required: false ,unique: true })
+  @Prop({ required: true })
   Companyname: string;
   @Prop()
   password: string;
   @Prop({ default: false })
   isVerified: boolean;
-   @Prop({unique: true})
-   matricule: string;
-   @Prop()
-   address: string;
+  @Prop({ unique: true })
+  matricule: string;
   @Prop()
   expiresAt: Date;
   @Prop()

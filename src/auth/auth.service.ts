@@ -4,18 +4,21 @@ import {
   NotFoundException,
   UnauthorizedException,
   Req,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { MailService } from './services/mail.service';
-import { User } from './schemas/user.schema';
+import { User } from '../user/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SignupDto } from './dto/signupdto';
+import { SignupDto } from '../user/dto/signupdto';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { LoginDto } from './dto/logindto';
+import { LoginDto } from '../user/dto/logindto';
 import { RolesService } from 'src/roles/roles.service';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from './schemas/refresh-token.schema';
+import { nanoid } from 'nanoid';
+import { ResetToken } from './schemas/reset-token.schema';
 
 @Injectable()
 export class AuthService {
@@ -24,11 +27,13 @@ export class AuthService {
     private readonly mailService: MailService, // Inject MailService
     @InjectModel(RefreshToken.name)
     private RefreshTokenModel: Model<RefreshToken>,
-     private jwtService: JwtService,
+    private jwtService: JwtService,
     private rolesService: RolesService,
+    @InjectModel(ResetToken.name)
+    private ResetTokenModel: Model<ResetToken>,
   ) {}
   async signup(signupData: SignupDto) {
-    const { email ,address ,password , matricule , Companyname } = signupData;
+    const { email, password, matricule, Companyname } = signupData;
 
     // Check if email is already in use
     const emailInUse = await this.UserModel.findOne({ email });
@@ -58,22 +63,21 @@ export class AuthService {
     const user = await this.UserModel.create({
       email,
       Companyname,
-      address,
       matricule,
-      password : hashedPassword,
+      password: hashedPassword,
       isVerified: false,
       verificationToken,
       expiresAt,
     });
     await this.mailService.sendEmailVerification(email, verificationToken);
-    return { message: 'Verification email sent.' };
+    return { message: 'Check Your email to verify your account' };
   }
 
   async verifyEmail(emailToken: string) {
     // Lookup the user based on a unique identifier associated with the token
     const user = await this.UserModel.findOne({
       verificationToken: emailToken,
-      expiresAt: { $gt: new Date()}
+      expiresAt: { $gt: new Date() },
     });
     if (!user || user.expiresAt < new Date()) {
       throw new BadRequestException('Invalid or expired token');
@@ -81,7 +85,7 @@ export class AuthService {
     // Mark the user as verified
     user.isVerified = true;
     user.verificationToken = undefined; // Supprimer le token après vérification
-    user.expiresAt =  undefined;
+    user.expiresAt = undefined;
     await user.save();
 
     return { message: 'Email successfully verified' };
@@ -97,7 +101,6 @@ export class AuthService {
   //   if (!user.isVerified) {
   //     throw new UnauthorizedException('Email verification required.');
   //   }
-  //   // Hash the password
   //   const hashedPassword = await bcrypt.hash(password, 10);
   //   user.name = name;
   //    user.matricule = matricule;
@@ -130,6 +133,69 @@ export class AuthService {
     // Si tout est correct, retourner un message de succès (ou un token JWT si nécessaire)
     return { message: 'Login successful' };
   }
+  async changePassword(userId, oldPassword: string, newPassword: string) {
+    //Find the user
+    const user = await this.UserModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found...');
+    }
+
+    //Compare the old password with the password in DB
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Wrong credentials');
+    }
+
+    //Change user's password
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = newHashedPassword;
+    await user.save();
+  }
+
+  async forgotPassword(email: string) {
+    //Check that user exists
+    const user = await this.UserModel.findOne({ email });
+
+    if (user) {
+      //If user exists, generate password reset link
+      const expiryDate = new Date();
+      expiryDate.setHours(expiryDate.getHours() + 1);
+
+      const resetToken = nanoid(64);
+      await this.ResetTokenModel.create({
+        token: resetToken,
+        userId: user._id,
+        expiryDate,
+      });
+      //Send the link to the user by email
+      this.mailService.sendPasswordResetEmail(email, resetToken);
+    }
+
+    return { message: 'If this user exists, they will receive an email' };
+  }
+
+  async resetPassword(newPassword: string, resetToken: string) {
+    //Find a valid reset token document
+    const token = await this.ResetTokenModel.findOneAndDelete({
+      token: resetToken,
+      expiryDate: { $gte: new Date() },
+    });
+
+    if (!token) {
+      throw new UnauthorizedException('Invalid link');
+    }
+
+    //Change user password (MAKE SURE TO HASH!!)
+    const user = await this.UserModel.findById(token.userId);
+    if (!user) {
+      throw new InternalServerErrorException();
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+  }
+
+  //gère la régénération des tokens sans que l'utilisateur ait besoin de se reconnecter.
   async refreshTokens(refreshToken: string) {
     const token = await this.RefreshTokenModel.findOne({
       token: refreshToken,
@@ -141,6 +207,7 @@ export class AuthService {
     }
     return this.generateUserTokens(token.userId);
   }
+  //Génère les tokens pour l'accès et le rafraîchissement lors de la connexion ou du renouvellement
   async generateUserTokens(userId) {
     const accessToken = this.jwtService.sign({ userId }, { expiresIn: '10h' });
     const refreshToken = uuidv4();
@@ -155,22 +222,22 @@ export class AuthService {
     // Calculate expiry date 3 days from now
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 3);
-
+    // Update the refresh token in the database, or create it if it doesn’t exist
     await this.RefreshTokenModel.updateOne(
       { userId },
       { $set: { expiryDate, token } },
       {
-        upsert: true,
+        upsert: true, // creates a new document if none exists
       },
     );
   }
 
   async getUserPermissions(userId: string) {
-     const user = await this.UserModel.findById(userId);
+    const user = await this.UserModel.findById(userId);
 
-     if (!user) throw new BadRequestException();
-
-     const role = await this.rolesService.getRoleById(user.roleId.toString());
+    if (!user) throw new BadRequestException();
+    // Fetch the user's role and associated permissions
+    const role = await this.rolesService.getRoleById(user.roleId.toString());
     return role.permissions;
   }
 }
