@@ -29,5 +29,6 @@ import { UserModule } from 'src/user/user.module';
   ],
   providers: [AuthService, MailService],
   controllers: [AuthController],
+  exports:[AuthService],
 })
 export class AuthModule {}

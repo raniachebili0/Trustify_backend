@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,6 +8,7 @@ import {
   Put,
   Query,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -23,11 +25,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('signup')
   async signUp(@Body() signupData: SignupDto) {
-    return this.authService.signup(signupData);
+    await this.authService.signup(signupData);
+    return { message: 'Signup successful. Please verify your email.' };
   }
   @Get('verify/:token')
   async verifyUserEmail(@Param('token') token: string) {
-    return this.authService.verifyEmail(token);
+    const result = await this.authService.verifyEmail(token);
+    return { message: result ? 'Email verification successful. You can now log in.' : 'Verification failed. Invalid or expired token.' };
   }
 
   // @UseGuards(AuthenticationGuard)
@@ -38,9 +42,22 @@ export class AuthController {
   // ) {
   //   return this.authService.completeProfile(profileData, req.userId);
   // }
+  @Get('reset-password')
+  async validateResetToken(@Query('token') token: string) {
+    if (!token) {
+      throw new BadRequestException('Token is required');
+    }
+    // Validate the token (logic inside your service)
+    const isValid = await this.authService.validateResetToken(token);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+    return { message: 'Token is valid', token };
+  }
   @Post('refresh')
   async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshTokens(refreshTokenDto.refreshToken);
+    const tokens = await this.authService.refreshTokens(refreshTokenDto.refreshToken);
+  return { message: 'Tokens refreshed successfully.', tokens };
   }
 
   @UseGuards(AuthenticationGuard)
@@ -49,11 +66,12 @@ export class AuthController {
     @Body() changePasswordDto: ChangePasswordDto,
     @Req() req,
   ) {
-    return this.authService.changePassword(
+    await this.authService.changePassword(
       req.userId,
       changePasswordDto.oldPassword,
       changePasswordDto.newPassword,
     );
+    return { message: 'Password changed successfully.' };
   }
 
   @Post('forgot-password')
@@ -63,14 +81,25 @@ export class AuthController {
 
   @Put('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    return this.authService.resetPassword(
-      resetPasswordDto.newPassword,
-      resetPasswordDto.resetToken,
-    );
+    try {
+      await this.authService.resetPassword(
+        resetPasswordDto.newPassword,
+        resetPasswordDto.resetToken,
+      );
+  
+      // Return a success message
+      return { message: 'Your password has been successfully reset.' };
+    } catch (error) {
+      // Handle errors (e.g., invalid or expired token)
+      throw new UnauthorizedException(
+        'Invalid or expired reset token. Please request a new password reset.',
+      );
+    }
   }
   @Post('login')
   async login(@Body() credentials: LoginDto) {
-    console.log('login');
-    return this.authService.login(credentials);
+    //console.log('login');
+    const tokens = await this.authService.login(credentials);
+    return { message: 'Login successful.', tokens };
   }
 }

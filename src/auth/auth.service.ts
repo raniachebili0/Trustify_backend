@@ -41,20 +41,6 @@ export class AuthService {
       throw new BadRequestException('Email already in use');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    // const verificationToken = uuidv4()
-    // const expiresAt = new Date();
-    // expiresAt.setHours(expiresAt.getHours() + 1);
-    // await this.verificationTokenEmailModel.create({
-    //   token: verificationToken,
-    //   userId: user._id,
-    //   expiresAt,
-    // });
-    // Send verification email
-    // const verificationLink = `http://yourapp.com/verify-email?token=${verificationToken}`;
-    // await this.mailService.sendEmailVerification(
-    //   email,
-    //   `Click the link to verify your email: ${verificationLink}`,
-    // );
     // Générer un token de vérification unique et définir l’expiration
     const verificationToken = uuidv4();
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
@@ -129,9 +115,13 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
-    // Si tout est correct, retourner un message de succès (ou un token JWT si nécessaire)
-    return { message: 'Login successful' };
+    //Generate JWT tokens
+    const tokens = await this.generateUserTokens(user._id);
+    return {
+     
+      ...tokens,
+      userId: user._id,
+    };
   }
   async changePassword(userId, oldPassword: string, newPassword: string) {
     //Find the user
@@ -173,7 +163,22 @@ export class AuthService {
 
     return { message: 'If this user exists, they will receive an email' };
   }
+  async validateResetToken(token: string): Promise<boolean> {
+    // Find the reset token in the database
+    const resetToken = await this.ResetTokenModel.findOne({ token });
 
+    if (!resetToken) {
+      return false; // Token is invalid if not found
+    }
+
+    // Check if the token has expired
+    const isTokenExpired = new Date() > resetToken.expiryDate;
+    if (isTokenExpired) {
+      return false; // Token is invalid if it has expired
+    }
+
+    return true; // Token is valid
+  }
   async resetPassword(newPassword: string, resetToken: string) {
     //Find a valid reset token document
     const token = await this.ResetTokenModel.findOneAndDelete({

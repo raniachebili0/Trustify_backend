@@ -124,12 +124,91 @@ export class MailService {
         subject: 'Password Reset Request',
         plainText: `You requested a password reset. Use the following link to reset your password: ${resetLink}`,
         html: `
-          <html>
-            <body>
-              <p>You requested a password reset. Click the link below to reset your password:</p>
-              <p><a href="${resetLink}">Reset Password</a></p>
-            </body>
-          </html>
+         <html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #0033a0;
+        color: #ffffff;
+        text-align: center;
+        padding: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .content {
+        padding: 20px;
+        text-align: center;
+        color: #555555;
+      }
+      .content p {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .reset-button {
+        display: inline-block;
+        margin: 20px 0;
+        padding: 10px 20px;
+        background-color: #0033a0;
+        color: #ffffff !important; /* Make sure text is white for visibility */
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 4px;
+        font-weight: bold; /* To make the text stand out more */
+        transition: background-color 0.3s ease;
+      }
+      .reset-button:hover {
+        background-color: #002570;
+      }
+      .reset-button:active {
+        background-color: #001A4B; /* A slightly darker shade when clicked */
+      }
+      .footer {
+        text-align: center;
+        padding: 10px;
+        font-size: 12px;
+        color: #777777;
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>Password Reset</h1>
+      </div>
+      <div class="content">
+        <p>
+          Hello,<br>
+          We received a request to reset your password. Click the button below to reset it:
+        </p>
+        <a href="${resetLink}" class="reset-button" target="_blank" style="color: #ffffff !important;">Reset Password</a>
+        <p>If you didn't request this, you can safely ignore this email.</p>
+      </div>
+      <div class="footer">
+        <p>Thank you for using our service.</p>
+        <p>&copy; ${new Date().getFullYear()} Trustify</p>
+      </div>
+    </div>
+  </body>
+</html>
+
         `,
       },
       recipients: {
