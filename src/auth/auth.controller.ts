@@ -12,17 +12,24 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignupDto } from '../user/dto/signupdto';
+import { SignupDto, SignupResponseDto } from '../user/dto/signupdto';
 import { LoginDto } from '../user/dto/logindto';
 import { AuthenticationGuard } from 'src/guards/authenticationGuard';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RefreshTokenDto } from './dto/refresh-tokens.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Authentifiaction Section')
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+  @ApiOperation({ summary: 'To create an account ' })
+  @ApiResponse({ status: 201,
+    description :'account created ',
+    type: SignupResponseDto})
   @Post('signup')
   async signUp(@Body() signupData: SignupDto) {
     await this.authService.signup(signupData);
@@ -31,7 +38,11 @@ export class AuthController {
   @Get('verify/:token')
   async verifyUserEmail(@Param('token') token: string) {
     const result = await this.authService.verifyEmail(token);
-    return { message: result ? 'Email verification successful. You can now log in.' : 'Verification failed. Invalid or expired token.' };
+    return {
+      message: result
+        ? 'Email verification successful. You can now log in.'
+        : 'Verification failed. Invalid or expired token.',
+    };
   }
 
   // @UseGuards(AuthenticationGuard)
@@ -56,10 +67,12 @@ export class AuthController {
   }
   @Post('refresh')
   async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
-    const tokens = await this.authService.refreshTokens(refreshTokenDto.refreshToken);
-  return { message: 'Tokens refreshed successfully.', tokens };
+    const tokens = await this.authService.refreshTokens(
+      refreshTokenDto.refreshToken,
+    );
+    return { message: 'Tokens refreshed successfully.', tokens };
   }
-
+  @ApiOperation({ summary: 'Used to change your password ' })
   @UseGuards(AuthenticationGuard)
   @Put('change-password')
   async changePassword(
@@ -73,12 +86,14 @@ export class AuthController {
     );
     return { message: 'Password changed successfully.' };
   }
-
+  @ApiOperation({
+    summary: 'Used when user forget password and send an reset email  ',
+  })
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     return this.authService.forgotPassword(forgotPasswordDto.email);
   }
-
+  @ApiOperation({ summary: 'reset the password after reset link ' })
   @Put('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
@@ -86,7 +101,7 @@ export class AuthController {
         resetPasswordDto.newPassword,
         resetPasswordDto.resetToken,
       );
-  
+
       // Return a success message
       return { message: 'Your password has been successfully reset.' };
     } catch (error) {
@@ -96,6 +111,7 @@ export class AuthController {
       );
     }
   }
+  @ApiOperation({ summary: 'To login in the  account ' })
   @Post('login')
   async login(@Body() credentials: LoginDto) {
     //console.log('login');

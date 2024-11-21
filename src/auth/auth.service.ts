@@ -33,7 +33,7 @@ export class AuthService {
     private ResetTokenModel: Model<ResetToken>,
   ) {}
   async signup(signupData: SignupDto) {
-    const { email, password, matricule, Companyname } = signupData;
+    const { email, password, registrationNumb, Companyname } = signupData;
 
     // Check if email is already in use
     const emailInUse = await this.UserModel.findOne({ email });
@@ -49,7 +49,7 @@ export class AuthService {
     const user = await this.UserModel.create({
       email,
       Companyname,
-      matricule,
+      registrationNumb,
       password: hashedPassword,
       isVerified: false,
       verificationToken,

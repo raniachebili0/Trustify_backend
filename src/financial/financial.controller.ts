@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { FinancialService } from './financial.service';
 import { CreateFinancialDto } from './dto/create-financial.dto';
 import { UpdateFinancialDto } from './dto/update-financial.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Financial Section')
 @Controller('financial')
 export class FinancialController {
   constructor(private readonly financialService: FinancialService) {}
