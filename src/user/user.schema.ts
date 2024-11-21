@@ -14,9 +14,9 @@ export class User extends Document {
   @ApiProperty({ description: 'status of verification email' })
   @Prop({ default: false })
   isVerified: boolean;
- 
-  @Prop({ unique: true })
-  registrationnumber: string;
+
+  @Prop({})
+  registrationNumb: string;
 
   @Prop()
   expiresAt: Date;

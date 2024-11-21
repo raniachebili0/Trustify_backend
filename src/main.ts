@@ -12,8 +12,8 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-    const document = SwaggerModule.createDocument(app, config); // Create the document
-     SwaggerModule.setup('api', app, document);
+  const document = SwaggerModule.createDocument(app, config); // Create the document
+  SwaggerModule.setup('api', app, document);
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe()); //validation global tout controller
   await app.listen(3000 /*'192.168.243.57'*/);

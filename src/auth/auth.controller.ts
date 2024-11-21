@@ -19,7 +19,12 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RefreshTokenDto } from './dto/refresh-tokens.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Authentifiaction Section')
 @ApiBearerAuth()
@@ -27,9 +32,11 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @ApiOperation({ summary: 'To create an account ' })
-  @ApiResponse({ status: 201,
-    description :'account created ',
-    type: SignupResponseDto})
+  @ApiResponse({
+    status: 201,
+    description: 'account created ',
+    type: SignupResponseDto,
+  })
   @Post('signup')
   async signUp(@Body() signupData: SignupDto) {
     await this.authService.signup(signupData);
@@ -114,7 +121,7 @@ export class AuthController {
   @ApiOperation({ summary: 'To login in the  account ' })
   @Post('login')
   async login(@Body() credentials: LoginDto) {
-    //console.log('login');
+    console.log('login');
     const tokens = await this.authService.login(credentials);
     return { message: 'Login successful.', tokens };
   }
