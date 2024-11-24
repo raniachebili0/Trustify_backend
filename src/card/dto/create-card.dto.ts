@@ -8,16 +8,18 @@ export class CreateCardDto {
     @IsNumber()
     cardNumber: number;
     @IsNotEmpty()
-    expirationDate: number;
+    userId: number;
+    @IsNotEmpty()
+    expirationDate: string;
     @IsNotEmpty()
     @IsNumber()
     cvc: number;
     @IsNotEmpty()
-    holderName: number;
+    holderName: string;
     @IsNotEmpty()
-    address1: number;
+    address1: string;
     @IsNotEmpty()
-    address2: number;
+    address2: string;
 
     
 }

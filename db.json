@@ -1,0 +1,167 @@
+{
+    "credit_cards": [
+      {
+        "number": "4242424245457",
+        "expiry": "06/19",
+        "cvc": "300",
+        "type": "visa",
+        "balance": 350,
+        "transactions": [
+          {
+            "fromAccount": null,
+            "toAccount": "1234560001",
+            "amount": 300,
+            "newBalance": 300,
+            "txnType": "DEPOSIT",
+            "txnRef": "45bfe291-b799-4765-899a-94c4597a6ced",
+            "createdAt": "2023-10-23T04:35:46.68912Z"
+          },
+          {
+            "fromAccount": null,
+            "toAccount": "1234560001",
+            "amount": 100,
+            "newBalance": 400,
+            "txnType": "DEPOSIT",
+            "txnRef": "a8b9231c-9e11-4a76-8b99-ec65b5a9dd47",
+            "createdAt": "2023-10-24T08:15:20.12345Z"
+          },
+          {
+            "fromAccount": "1234560001",
+            "toAccount": null,
+            "amount": 50,
+            "newBalance": 350,
+            "txnType": "WITHDRAW",
+            "txnRef": "3ab47fd9-bf01-47b6-98eb-b82f7a56c9f8",
+            "createdAt": "2023-10-25T10:45:00.98765Z"
+          },
+          {
+            "fromAccount": "1234560001",
+            "toAccount": "1234560002",
+            "amount": 200,
+            "newBalance": 150,
+            "txnType": "TRANSFER",
+            "txnRef": "b8c3eac8-569e-4a34-885c-e548c348c1a4",
+            "createdAt": "2023-10-26T16:10:30.45678Z"
+          },
+          {
+            "fromAccount": null,
+            "toAccount": "1234560001",
+            "amount": 500,
+            "newBalance": 650,
+            "txnType": "DEPOSIT",
+            "txnRef": "6fa8cd9b-4cf6-42a2-b2a7-7e3c5f8d9acb",
+            "createdAt": "2023-10-27T12:00:20.54321Z"
+          }
+        ]
+      },
+      {
+        "number": "1234567898765",
+        "expiry": "12/25",
+        "cvc": "123",
+        "type": "mastercard",
+        "balance": 475,
+        "transactions": [
+          {
+            "fromAccount": null,
+            "toAccount": "9876540001",
+            "amount": 200,
+            "newBalance": 200,
+            "txnType": "DEPOSIT",
+            "txnRef": "b234abc3-7dcb-4a77-8e01-4b4a506b3e9a",
+            "createdAt": "2023-11-15T10:15:30.12345Z"
+          },
+          {
+            "fromAccount": "9876540001",
+            "toAccount": null,
+            "amount": 50,
+            "newBalance": 150,
+            "txnType": "WITHDRAW",
+            "txnRef": "cde19f56-a0d5-49eb-80f5-b4ed89c10c31",
+            "createdAt": "2023-11-16T12:20:45.67890Z"
+          },
+          {
+            "fromAccount": "9876540001",
+            "toAccount": "9876540002",
+            "amount": 25,
+            "newBalance": 125,
+            "txnType": "TRANSFER",
+            "txnRef": "fedc12ab-9ec3-4678-b134-4c24b5678f90",
+            "createdAt": "2023-11-17T14:45:00.23456Z"
+          },
+          {
+            "fromAccount": null,
+            "toAccount": "9876540001",
+            "amount": 300,
+            "newBalance": 425,
+            "txnType": "DEPOSIT",
+            "txnRef": "4567fd87-98a1-47b2-9823-b16c7198e879",
+            "createdAt": "2023-11-18T18:00:20.54321Z"
+          },
+          {
+            "fromAccount": "9876540003",
+            "toAccount": "9876540001",
+            "amount": 50,
+            "newBalance": 475,
+            "txnType": "TRANSFER",
+            "txnRef": "e98734ab-f76e-45a4-b51a-0c49721bf321",
+            "createdAt": "2023-11-20T09:10:30.11122Z"
+          }
+        ]
+      },
+      {
+        "number": "5678123443218",
+        "expiry": "03/24",
+        "cvc": "456",
+        "type": "amex",
+        "balance": 500,
+        "transactions": [
+          {
+            "fromAccount": null,
+            "toAccount": "8765430001",
+            "amount": 400,
+            "newBalance": 400,
+            "txnType": "DEPOSIT",
+            "txnRef": "ab12cd34-ef56-7890-gh12-ijkl34567890",
+            "createdAt": "2023-09-10T09:25:30.00000Z"
+          },
+          {
+            "fromAccount": "8765430001",
+            "toAccount": null,
+            "amount": 150,
+            "newBalance": 250,
+            "txnType": "WITHDRAW",
+            "txnRef": "cd34ef56-7890-gh12-ijkl-3456789012ab",
+            "createdAt": "2023-09-12T10:30:45.12300Z"
+          },
+          {
+            "fromAccount": "8765430001",
+            "toAccount": "8765430002",
+            "amount": 100,
+            "newBalance": 150,
+            "txnType": "TRANSFER",
+            "txnRef": "fe12ab34-56cd-78ef-90gh-12ij3456kl78",
+            "createdAt": "2023-09-13T12:40:55.56789Z"
+          },
+          {
+            "fromAccount": null,
+            "toAccount": "8765430001",
+            "amount": 300,
+            "newBalance": 450,
+            "txnType": "DEPOSIT",
+            "txnRef": "9876abcd-1234-efgh-5678-ijkl12345678",
+            "createdAt": "2023-09-14T15:20:10.78901Z"
+          },
+          {
+            "fromAccount": "8765430003",
+            "toAccount": "8765430001",
+            "amount": 50,
+            "newBalance": 500,
+            "txnType": "TRANSFER",
+            "txnRef": "bcde5678-90ab-cdef-gh12-ij34kl5678mn",
+            "createdAt": "2023-09-15T18:10:30.00012Z"
+          }
+        ]
+      }
+    ]
+  }
+  
