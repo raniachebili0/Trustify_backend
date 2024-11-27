@@ -1,25 +1,20 @@
 import { IsNotEmpty, IsNumber } from "class-validator";
+import { User } from "src/user/entities/user.entity";
+import { Transactions } from "../credit-card.schema";
 
 export class CreateCardDto {
 
-
-
-    @IsNotEmpty()
-    @IsNumber()
-    cardNumber: number;
-    @IsNotEmpty()
-    userId: number;
-    @IsNotEmpty()
-    expirationDate: string;
-    @IsNotEmpty()
-    @IsNumber()
+    number: number;
+    
+    expiry: string;
+    
     cvc: number;
-    @IsNotEmpty()
-    holderName: string;
-    @IsNotEmpty()
-    address1: string;
-    @IsNotEmpty()
-    address2: string;
+  
+    type: string;
+    
+    balance: number;
+
+    transactions: Transactions[];
 
     
 }

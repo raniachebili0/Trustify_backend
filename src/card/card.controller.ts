@@ -2,11 +2,42 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
+import { BankingService } from 'src/services/BankingService';
 
 @Controller('card')
 export class CardController {
-  constructor(private readonly cardService: CardService) {}
+  constructor(private readonly cardService: CardService,
+    private readonly  bankingService :BankingService
+  ) {}
 
+
+  @Post('add')
+  async addCreditCard(@Body() body: { number: string }) {
+    // Fetch card data from the mock API
+
+    try {
+      const cardData = await this.bankingService.getCardData(body.number);
+      console.log('Card Data:', cardData);
+      
+      if (!cardData || Object.keys(cardData).length === 0) {
+        throw new Error('Card not found in the banking API');
+      }
+  
+      // Save the card with its transactions directly in MongoDB
+      const savedCard = await this.cardService.saveCardData(cardData);
+      console.log('Saved Card:', savedCard); 
+      return savedCard;
+    } catch (error) {
+      console.error('Error adding credit card:', error.message);
+      throw new Error(error.message);
+    }
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.cardService.findOne(id);
+  }
+ /* 
   @Post()
   create(@Body() createCardDto: CreateCardDto) {
     return this.cardService.create(createCardDto);
@@ -17,10 +48,7 @@ export class CardController {
     return this.cardService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cardService.findOne(+id);
-  }
+  
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
@@ -30,5 +58,5 @@ export class CardController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.cardService.remove(+id);
-  }
+  }*/
 }
