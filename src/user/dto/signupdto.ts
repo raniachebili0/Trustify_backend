@@ -42,6 +42,9 @@ export class SignupResponseDto {
   Companyname: string;
   @ApiProperty({ description: 'The password of account' })
   password: string;
-  @ApiProperty({ description: 'registration number of company' , example:'1012987654321'})
+  @ApiProperty({
+    description: 'registration number of company',
+    example: '1012987654321',
+  })
   registrationNumb: string;
 }

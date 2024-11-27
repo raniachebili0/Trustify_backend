@@ -10,6 +10,7 @@ import {
   Req,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto, SignupResponseDto } from '../user/dto/signupdto';
@@ -25,10 +26,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { LoggingInterceptor } from 'Interceptor/LoggingInterceptor';
 
 @ApiTags('Authentifiaction Section')
 @ApiBearerAuth()
 @Controller('auth')
+@UseInterceptors(LoggingInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @ApiOperation({ summary: 'To create an account ' })
@@ -60,6 +63,7 @@ export class AuthController {
   // ) {
   //   return this.authService.completeProfile(profileData, req.userId);
   // }
+  //validation
   @Get('reset-password')
   async validateResetToken(@Query('token') token: string) {
     if (!token) {
@@ -96,9 +100,9 @@ export class AuthController {
   @ApiOperation({
     summary: 'Used when user forget password and send an reset email  ',
   })
-  @Post('forgot-password')
+  @Post('forget-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    return this.authService.forgotPassword(forgotPasswordDto.email);
+    this.authService.forgetPassword(forgotPasswordDto.email);
   }
   @ApiOperation({ summary: 'reset the password after reset link ' })
   @Put('reset-password')
