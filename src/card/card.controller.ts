@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { BankingService } from 'src/services/BankingService';
+import { Card } from './credit-card.schema';
 
 @Controller('card')
 export class CardController {
@@ -33,10 +34,18 @@ export class CardController {
     }
   }
 
+
+  @Get('getCardByUserId')
+  async findCard(@Query('userId') id: string): Promise<Card | null> {
+    return await this.cardService.findOneCard(id);  
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.cardService.findOne(id);
   }
+
+  
  /* 
   @Post()
   create(@Body() createCardDto: CreateCardDto) {

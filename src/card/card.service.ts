@@ -59,4 +59,8 @@ export class CardService {
   async findOne(id: string) : Promise <Card> {
     return this.cardModel.findById(id).exec();
   }
+
+  async findOneCard(id: string): Promise<Card | null> {
+    return this.cardModel.findOne({ userId: id }).exec();
+  }
 }
