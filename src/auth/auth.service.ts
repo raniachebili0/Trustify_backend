@@ -142,7 +142,7 @@ export class AuthService {
     await user.save();
   }
 
-  async forgetPassword(email: string) {
+  async forgotPassword(email: string) {
     //Check that user exists
     const user = await this.UserModel.findOne({ email });
 

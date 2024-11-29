@@ -1,36 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthenticationGuard } from 'src/guards/authentication.guard';
+import { User } from './user.schema';
 
 @ApiTags('User Section')
-@Controller('user')
+@Controller('users')
+@UseGuards(AuthenticationGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post('user')
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return await this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @Get('list')
+  async findAll(): Promise<User[]> {
+    return await this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  @Get('profile')
+  async findOne(@Req() req): Promise<User> {
+    return await this.userService.findOne(req.userId); // Fetch logged-in user's data
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @Patch('profile')
+  async update(
+    @Req() req,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.userService.update(req.userId, updateUserDto); // Update logged-in user
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  @Delete('profile')
+  async remove(@Req() req): Promise<{ message: string }> {
+    await this.userService.remove(req.userId);
+    return { message: 'User successfully deleted' }; // Delete logged-in user
   }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(id);
+  // }
 }

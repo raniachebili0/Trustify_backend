@@ -15,7 +15,7 @@ import {
 import { AuthService } from './auth.service';
 import { SignupDto, SignupResponseDto } from '../user/dto/signupdto';
 import { LoginDto } from '../user/dto/logindto';
-import { AuthenticationGuard } from 'src/guards/authenticationGuard';
+import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RefreshTokenDto } from './dto/refresh-tokens.dto';
@@ -100,9 +100,9 @@ export class AuthController {
   @ApiOperation({
     summary: 'Used when user forget password and send an reset email  ',
   })
-  @Post('forget-password')
+  @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    this.authService.forgetPassword(forgotPasswordDto.email);
+    this.authService.forgotPassword(forgotPasswordDto.email);
   }
   @ApiOperation({ summary: 'reset the password after reset link ' })
   @Put('reset-password')

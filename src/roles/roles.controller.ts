@@ -6,8 +6,9 @@ import { CreateRoleDto } from './dtos/role.dto';
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
-  @Post()
+  @Post('role')
   async createRole(@Body() role: CreateRoleDto) {
+   // console.log('Role Data:', role); 
     return this.rolesService.createRole(role);
   }
 }
