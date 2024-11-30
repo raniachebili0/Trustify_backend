@@ -12,6 +12,7 @@ import { ErrorHandlerMiddleware } from './middleware/error-handler.middleware';
 import { FinancialModule } from './financial/financial.module';
 import { UserModule } from './user/user.module';
 import { DocumentModule } from './document/document.module';
+import { CardModule } from './card/card.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -39,6 +40,7 @@ import { DocumentModule } from './document/document.module';
     FinancialModule,
     UserModule,
     DocumentModule,
+    CardModule
   ],
   controllers: [AppController],
   providers: [AppService],

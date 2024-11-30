@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,10 +16,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { User } from './user.schema';
+import { LoggingInterceptor } from 'Interceptor/LoggingInterceptor';
 
 @ApiTags('User Section')
 @Controller('users')
 @UseGuards(AuthenticationGuard)
+@UseInterceptors(LoggingInterceptor)
+
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
