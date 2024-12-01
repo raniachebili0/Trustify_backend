@@ -41,9 +41,15 @@ export class Card {
     @Prop({ type: [Transactions], default: [] }) // Embed the transactions array
     transactions: Transactions[];
 
+<<<<<<< HEAD
  //   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     @Prop()
     userId: string ;
+=======
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    // @Prop({required: true})
+     userId: string ;
+>>>>>>> origin/sabrina
 }
 
 

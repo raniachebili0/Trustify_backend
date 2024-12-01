@@ -16,6 +16,7 @@ export class CardService {
   @InjectModel(Card.name) private cardModel : Model <CardDocument>, ){}
 
   async saveCardData(cardData: any) {
+<<<<<<< HEAD
     if (Array.isArray(cardData) && cardData.length > 0) {
       const { number, expiry, cvc, type, balance, transactions , userId = "kkkk" } = cardData[0]; // Access the first object in the array
   
@@ -38,6 +39,39 @@ export class CardService {
   }
   
   
+=======
+    if (!cardData.userId) {
+      throw new Error('User ID is required to save card data');
+    }
+  
+    const { number, expiry, cvc, type, balance, transactions, userId } = cardData;
+  
+    console.log('Card Data to be saved:', {
+      number,
+      expiry,
+      cvc,
+      type,
+      balance,
+      transactions,
+      userId, // Ajout pour vérification
+    });
+  
+    const creditCard = await this.cardModel.create({
+      number,
+      expiry,
+      cvc,
+      type,
+      balance,
+      transactions, // Embedding transactions
+      userId,
+    });
+  
+    return creditCard;
+  }
+  
+  
+  
+>>>>>>> origin/sabrina
 /*
   async create(createCardDto: CreateCardDto): Promise<Card> {
     const createCard = new this.cardModel(createCardDto);
@@ -56,11 +90,20 @@ export class CardService {
     return this.cardModel.findByIdAndDelete(id).exec();
   }
  */
+<<<<<<< HEAD
   async findOne(id: string) : Promise <Card> {
     return this.cardModel.findById(id).exec();
   }
 
   async findOneCard(id: string): Promise<Card | null> {
     return this.cardModel.findOne({ userId: id }).exec();
+=======
+  async findOne(userId: string) : Promise <Card> {
+    return this.cardModel.findById(userId).exec();
+  }
+
+  async findOneCard(userId: string): Promise<Card | null> {
+    return this.cardModel.findOne({ userId }).exec();
+>>>>>>> origin/sabrina
   }
 }
