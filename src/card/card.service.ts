@@ -17,7 +17,7 @@ export class CardService {
 
   async saveCardData(cardData: any) {
     if (Array.isArray(cardData) && cardData.length > 0) {
-      const { number, expiry, cvc, type, balance, transactions , userId = "jjj" } = cardData[0]; // Access the first object in the array
+      const { number, expiry, cvc, type, balance, transactions , userId = "kkkk" } = cardData[0]; // Access the first object in the array
   
       console.log('Card Data to be saved:', { number, expiry, cvc, type, balance, transactions }); // Log the data
   

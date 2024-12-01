@@ -29,6 +29,10 @@ export class CardController {
       console.log('Saved Card:', savedCard); 
       return savedCard;
     } catch (error) {
+
+
+
+
       console.error('Error adding credit card:', error.message);
       throw new Error(error.message);
     }
