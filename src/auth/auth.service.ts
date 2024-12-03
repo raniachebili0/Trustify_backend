@@ -118,7 +118,6 @@ export class AuthService {
     //Generate JWT tokens
     const tokens = await this.generateUserTokens(user._id);
     return {
-     
       ...tokens,
       userId: user._id,
     };
@@ -214,7 +213,7 @@ export class AuthService {
   }
   //Génère les tokens pour l'accès et le rafraîchissement lors de la connexion ou du renouvellement
   async generateUserTokens(userId) {
-    const accessToken = this.jwtService.sign({ userId }, { expiresIn: '10h' });
+    const accessToken = this.jwtService.sign({ userId }, { expiresIn: process.env.JWT_EXPIRATION });
     const refreshToken = uuidv4();
 
     await this.storeRefreshToken(refreshToken, userId);
