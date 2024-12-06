@@ -11,6 +11,8 @@ export class UploadedFileModel {
     blobId: string;
     @Prop()
     url: string;
+    @Prop()
+    totalAmount : string;
    
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
      userId: string ;

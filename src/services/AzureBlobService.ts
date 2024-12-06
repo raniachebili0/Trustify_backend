@@ -3,8 +3,8 @@ import { BlobServiceClient } from '@azure/storage-blob'; // Azure SDK for Blob S
 
 @Injectable()
 export class AzureBlobService {
-  private readonly containerName = 'documents'; // Replace this with your actual container name
-  private readonly connectionString = 'DefaultEndpointsProtocol=https;AccountName=trastify;AccountKey=SFGiksNLB/BdsG4N6sylQNdTKn+9Z7Keg5FkH0l0MkGzlzNG/I9iR0WlkHJPX1/rKWqmqLTU+cRj+ASth3s+RA==;EndpointSuffix=core.windows.net'; // Replace this with your Azure connection string
+  private readonly containerName = process.env.CONTAINER_NAME; // Replace this with your actual container name
+  private readonly connectionString = process.env.CONNECTION_STRING
 
   // Get the BlobServiceClient to interact with Azure Blob Storage
   private getBlobServiceClient(): BlobServiceClient {
