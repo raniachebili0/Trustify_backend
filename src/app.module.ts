@@ -2,14 +2,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-<<<<<<< HEAD
-import { CardModule } from './card/card.module';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './user/user.module';
-
-@Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost/trustifyBD'),CardModule, UserModule],
-=======
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -50,7 +42,6 @@ import { CardModule } from './card/card.module';
     DocumentModule,
     CardModule
   ],
->>>>>>> origin/sabrina
   controllers: [AppController],
   providers: [AppService],
 })

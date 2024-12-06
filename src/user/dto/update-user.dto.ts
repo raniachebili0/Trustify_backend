@@ -1,9 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-<<<<<<< HEAD
-
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
-=======
 import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto  {
@@ -19,4 +15,3 @@ export class UpdateUserDto  {
   @IsOptional()
   registrationNumb?: string;
 }
->>>>>>> origin/sabrina

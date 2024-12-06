@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-export class CreateUserDto {}
-=======
 import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
 
 export class CreateUserDto {
@@ -17,4 +14,3 @@ export class CreateUserDto {
     @IsString()
     readonly  registrationNumb: string;
 }
->>>>>>> origin/sabrina

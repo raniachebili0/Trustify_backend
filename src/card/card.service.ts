@@ -16,30 +16,6 @@ export class CardService {
   @InjectModel(Card.name) private cardModel : Model <CardDocument>, ){}
 
   async saveCardData(cardData: any) {
-<<<<<<< HEAD
-    if (Array.isArray(cardData) && cardData.length > 0) {
-      const { number, expiry, cvc, type, balance, transactions , userId = "kkkk" } = cardData[0]; // Access the first object in the array
-  
-      console.log('Card Data to be saved:', { number, expiry, cvc, type, balance, transactions }); // Log the data
-  
-      const creditCard = await this.cardModel.create({
-        number,
-        expiry,
-        cvc,
-        type,
-        balance,
-        transactions,  // Directly embed transactions in the card document
-        userId ,
-      });
-  
-      return creditCard;
-    } else {
-      throw new Error('Invalid card data format');
-    }
-  }
-  
-  
-=======
     if (!cardData.userId) {
       throw new Error('User ID is required to save card data');
     }
@@ -71,7 +47,6 @@ export class CardService {
   
   
   
->>>>>>> origin/sabrina
 /*
   async create(createCardDto: CreateCardDto): Promise<Card> {
     const createCard = new this.cardModel(createCardDto);
@@ -90,20 +65,11 @@ export class CardService {
     return this.cardModel.findByIdAndDelete(id).exec();
   }
  */
-<<<<<<< HEAD
-  async findOne(id: string) : Promise <Card> {
-    return this.cardModel.findById(id).exec();
-  }
-
-  async findOneCard(id: string): Promise<Card | null> {
-    return this.cardModel.findOne({ userId: id }).exec();
-=======
   async findOne(userId: string) : Promise <Card> {
     return this.cardModel.findById(userId).exec();
   }
 
   async findOneCard(userId: string): Promise<Card | null> {
     return this.cardModel.findOne({ userId }).exec();
->>>>>>> origin/sabrina
   }
 }
