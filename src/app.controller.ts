@@ -7,13 +7,10 @@ import { Action } from './roles/enums/action.enum';
 import { Permissions } from './decorators/permissions.decorator';
 
 @UseGuards(AuthenticationGuard, AuthorizationGuard)
-@Controller('documents')
+@Controller('/')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Permissions([{ resource: Resource.DOCUMENTS, actions: [Action.READ] }])
-  @Get()
+    @Get()
   someProtectedRoute(@Req() req) {
-    return { message: 'Accessed Resource', userId: req.userId };
+    return { message: 'Accessed Protected Resource', userId: req.userId };
   }
 }

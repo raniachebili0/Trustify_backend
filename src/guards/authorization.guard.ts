@@ -4,6 +4,8 @@ import {
   ExecutionContext,
   UnauthorizedException,
   ForbiddenException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthService } from 'src/auth/auth.service';
@@ -12,7 +14,8 @@ import { Permission } from 'src/roles/dtos/role.dto';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
-  constructor(private reflector: Reflector, private authService: AuthService) {}
+  constructor(private reflector: Reflector, 
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService,) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
 
     const request = context.switchToHttp().getRequest();

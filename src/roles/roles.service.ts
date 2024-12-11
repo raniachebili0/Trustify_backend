@@ -12,9 +12,11 @@ export class RolesService {
     
     return this.RoleModel.create(role);
   }
-
-  async getRoleById(roleId: string) {
-    return this.RoleModel.findById(roleId);
+  async getRoleByName(roleName: string): Promise<Role> {
+    return await this.RoleModel.findOne({ name: roleName });
+  }
+  async getRoleById(roleId: string): Promise<Role> {
+    return this.RoleModel.findById(roleId).exec();
   }
 
 }

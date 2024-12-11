@@ -1,12 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, SchemaTypes, Types } from 'mongoose';
+import { Resource } from 'src/roles/enums/resource.enum';
+import { Role } from 'src/roles/schemas/role.schema';
 @Schema()
 export class User extends Document {
+  @Prop({required: false })
+  name: string;
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ })
   Companyname: string;
 
   @Prop()
@@ -22,8 +26,9 @@ export class User extends Document {
   expiresAt: Date;
   @Prop()
   verificationToken: string;
-  @Prop({ required: false, type: SchemaTypes.ObjectId })
+  @Prop({ type: Types.ObjectId, ref: 'Role', required: true })  // Reference to the Role schema
   roleId: Types.ObjectId;
+  
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
