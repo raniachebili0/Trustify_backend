@@ -39,7 +39,9 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.create(createUserDto);
   }
-
+  @Permissions({ resource: Resource.USERS, actions: [Action.READ] }) 
+  @UseGuards(AuthorizationGuard) 
+  @UseGuards(AuthenticationGuard)
   @Get('list')
   async findAll(): Promise<User[]> {
     return await this.userService.findAll();
