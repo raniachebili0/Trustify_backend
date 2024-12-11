@@ -6,10 +6,17 @@ import { User, UserSchema } from './user.schema';
 import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { AuthModule } from 'src/auth/auth.module';
 import { RolesModule } from 'src/roles/roles.module';
+import { RefreshToken, RefreshTokenSchema } from 'src/auth/schemas/refresh-token.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema },
+      {
+        name: RefreshToken.name,
+        schema: RefreshTokenSchema,
+      },
+
+    ],),
     forwardRef(() => AuthModule),
     RolesModule,
   ],

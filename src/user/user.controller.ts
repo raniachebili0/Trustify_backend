@@ -76,6 +76,13 @@ async remove(@Param('userId') userId: string): Promise<{ message: string }> {
     throw new ForbiddenException('You do not have permission to delete this user');
   }
 }
+@UseGuards(AuthenticationGuard)
+@Get('signout')
+async signOut(@Req() req): Promise<any> {
+  
+  await this.userService.signOut(req.userId);
+  return { message: 'User signed out successfully' };
+}
   // @Delete('profile')
   // async remove(@Req() req): Promise<{ message: string }> {
   //   await this.userService.remove(req.userId);

@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   Req,
+  Res,
   UnauthorizedException,
   UseGuards,
   UseInterceptors,
@@ -40,7 +41,7 @@ export class AuthController {
     description: 'account created ',
     type: SignupResponseDto,
   })
-  @Post('signup')
+ 
   @Post('signup')
   async signUp(@Body() signupData: SignupDto) {
     // Check if the email domain or specific condition is for admin
@@ -64,15 +65,6 @@ export class AuthController {
         : 'Verification failed. Invalid or expired token.',
     };
   }
-
-  // @UseGuards(AuthenticationGuard)
-  // @Post('complete-profile')
-  // async completeProfile(
-  //   @Body() profileData: CompleteProfiledto,
-  //   @Req() req,
-  // ) {
-  //   return this.authService.completeProfile(profileData, req.userId);
-  // }
   //validation
   @Get('reset-password')
   async validateResetToken(@Query('token') token: string) {
@@ -141,4 +133,5 @@ export class AuthController {
     const tokens = await this.authService.login(credentials);
     return { message: 'Login successful.', tokens };
   }
+
 }
