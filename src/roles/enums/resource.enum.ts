@@ -3,5 +3,7 @@ export enum Resource {
   DOCUMENTS = 'documents',
   EDITOR = 'editor',
   USERS = 'users',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
+  CARDS = 'cards',
+  
 }
