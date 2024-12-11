@@ -9,6 +9,8 @@ import {
   UseGuards,
   Req,
   UseInterceptors,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -56,14 +58,27 @@ export class UserController {
   ): Promise<User> {
     return await this.userService.update(req.userId, updateUserDto); // Update logged-in user
   }
-  @Permissions({ resource: Resource.ADMIN, actions: [Action.DELETE] })
+  @Permissions({ resource: Resource.USERS, actions: [Action.DELETE] })
   @UseGuards(AuthorizationGuard)
   @UseGuards(AuthenticationGuard)
-  @Delete('profile')
-  async remove(@Req() req): Promise<{ message: string }> {
-    await this.userService.remove(req.userId);
-    return { message: 'User successfully deleted' }; // Delete logged-in user
+  @Delete(':userId')
+async remove(@Param('userId') userId: string): Promise<{ message: string }> {
+  try {
+    // Call the service to delete the user by their userId
+    await this.userService.remove(userId);
+    return { message: 'User successfully deleted' };
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      throw error;  // Propagate the NotFoundException from the service
+    }
+    throw new ForbiddenException('You do not have permission to delete this user');
   }
+}
+  // @Delete('profile')
+  // async remove(@Req() req): Promise<{ message: string }> {
+  //   await this.userService.remove(req.userId);
+  //   return { message: 'User successfully deleted' }; // Delete logged-in user
+  // }
   // @Delete(':id')
   // remove(@Param('id') id: string) {
   //   return this.userService.remove(id);
