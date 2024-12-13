@@ -1,5 +1,9 @@
 export enum Resource {
   SETTINGS = 'settings',
   DOCUMENTS = 'documents',
-  USERS = 'users'
+  EDITOR = 'editor',
+  USERS = 'users',
+  ADMIN = 'admin',
+  CARDS = 'cards',
+  
 }

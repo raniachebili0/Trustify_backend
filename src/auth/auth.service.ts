@@ -19,6 +19,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { nanoid } from 'nanoid';
 import { ResetToken } from './schemas/reset-token.schema';
+import { userInfo } from 'os';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
     @InjectModel(ResetToken.name)
     private ResetTokenModel: Model<ResetToken>,
   ) {}
-  async signup(signupData: SignupDto) {
+  async signupUser(signupData: SignupDto) {
     const { email, password, registrationNumb, Companyname } = signupData;
 
     // Check if email is already in use
@@ -40,12 +41,21 @@ export class AuthService {
     if (emailInUse) {
       throw new BadRequestException('Email already in use');
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Générer un token de vérification unique et définir l’expiration
-    const verificationToken = uuidv4();
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    // Créer un nouvel utilisateur avec le token et l’état non vérifié
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate verification token and expiration time
+    const verificationToken = uuidv4();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours expiration
+
+    // Get the 'user' role reference
+    const role = await this.rolesService.getRoleByName('user');
+    if (!role) {
+      throw new BadRequestException('User role not found');
+    }
+
+    // Create a new user with the roleId assigned
     const user = await this.UserModel.create({
       email,
       Companyname,
@@ -54,11 +64,36 @@ export class AuthService {
       isVerified: false,
       verificationToken,
       expiresAt,
+      roleId: role._id, // Assign the role's ObjectId
     });
-    await this.mailService.sendEmailVerification(email, verificationToken);
-    return { message: 'Check Your email to verify your account' };
-  }
 
+    // Send email verification
+    await this.mailService.sendEmailVerification(email, verificationToken);
+
+    return { message: 'Check your email to verify your account' };
+  }
+  async signupAdmin(signupData: SignupDto) {
+    const { email, password, name } = signupData;
+
+    // Check if email is already in use
+    const emailInUse = await this.UserModel.findOne({ email });
+    if (emailInUse) {
+      throw new BadRequestException('Email already in use');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const adminRole = await this.rolesService.getRoleByName('admin');
+    // Create a new admin
+    const admin = await this.UserModel.create({
+      name,
+      email,
+      password: hashedPassword,
+      roleId: adminRole._id, // Assign the admin role
+      isVerified: true, // Admins are verified by default
+    });
+
+    return { message: 'Admin account created successfully' };
+  }
   async verifyEmail(emailToken: string) {
     // Lookup the user based on a unique identifier associated with the token
     const user = await this.UserModel.findOne({
@@ -118,7 +153,6 @@ export class AuthService {
     //Generate JWT tokens
     const tokens = await this.generateUserTokens(user._id);
     return {
-     
       ...tokens,
       userId: user._id,
     };
@@ -214,7 +248,10 @@ export class AuthService {
   }
   //Génère les tokens pour l'accès et le rafraîchissement lors de la connexion ou du renouvellement
   async generateUserTokens(userId) {
-    const accessToken = this.jwtService.sign({ userId }, { expiresIn: '10h' });
+    const accessToken = this.jwtService.sign(
+      { userId },
+      { expiresIn: "30d" },
+    );
     const refreshToken = uuidv4();
 
     await this.storeRefreshToken(refreshToken, userId);
@@ -245,4 +282,6 @@ export class AuthService {
     const role = await this.rolesService.getRoleById(user.roleId.toString());
     return role.permissions;
   }
+
+  
 }

@@ -6,6 +6,7 @@
         "cvc": "300",
         "type": "visa",
         "balance": 350,
+        "rib":"1234560001",
         "transactions": [
           {
             "fromAccount": null,
@@ -60,6 +61,7 @@
         "cvc": "123",
         "type": "mastercard",
         "balance": 475,
+        "rib":"9876540001",
         "transactions": [
           {
             "fromAccount": null,
@@ -114,6 +116,7 @@
         "cvc": "456",
         "type": "amex",
         "balance": 500,
+        "rib":"8765430001",
         "transactions": [
           {
             "fromAccount": null,

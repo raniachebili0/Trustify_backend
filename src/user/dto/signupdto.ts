@@ -2,12 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MinLength,
 } from 'class-validator';
 
 export class SignupDto {
+  @IsString()
+  @IsOptional() 
+  name:string;
   @ApiProperty({ description: 'The email of company' })
   @IsEmail()
   email: string;
@@ -15,6 +19,7 @@ export class SignupDto {
   @ApiProperty({ description: 'The name of company' })
   @IsString()
   @IsNotEmpty({ message: 'Name is required' })
+  @IsOptional()  
   Companyname: string;
 
   @ApiProperty({ description: 'The password of account' })
@@ -32,8 +37,12 @@ export class SignupDto {
       "Le matricule fiscal doit être composé de 13 chiffres au format valide : XX XX XXXXXXXXXXX, où les deux premiers chiffres représentent l'année, les deux suivants le code régional, et les sept derniers le numéro unique de l'entreprise.",
   })
   @IsNotEmpty({ message: 'registration number is required' })
+  @IsOptional()
   registrationNumb: string;
 }
+
+
+
 export class SignupResponseDto {
   @ApiProperty({ description: 'The email of company' })
   email: string;
@@ -47,4 +56,8 @@ export class SignupResponseDto {
     example: '1012987654321',
   })
   registrationNumb: string;
+
+  @ApiProperty({ description: 'The role ID assigned to the user' })
+  roleId: string;
+
 }

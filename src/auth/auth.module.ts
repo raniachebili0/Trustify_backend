@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,7 +15,7 @@ import { UserModule } from 'src/user/user.module';
 @Module({
   imports: [
     RolesModule,
-    UserModule,
+    forwardRef(() => UserModule),
     MongooseModule.forFeature([
       {
         name: RefreshToken.name,

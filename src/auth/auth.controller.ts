@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   Req,
+  Res,
   UnauthorizedException,
   UseGuards,
   UseInterceptors,
@@ -40,11 +41,21 @@ export class AuthController {
     description: 'account created ',
     type: SignupResponseDto,
   })
+ 
   @Post('signup')
   async signUp(@Body() signupData: SignupDto) {
-    await this.authService.signup(signupData);
-    return { message: 'Signup successful. Please verify your email.' };
+    // Check if the email domain or specific condition is for admin
+    if (this.isAdminEmail(signupData.email)) {
+      return this.authService.signupAdmin(signupData); 
+    } else {
+      return this.authService.signupUser(signupData); 
   }
+  }
+  private isAdminEmail(email: string): boolean {
+    const adminEmailDomain = process.env.ADMIN_EMAIL_DOMAIN; 
+    return email.endsWith(adminEmailDomain);
+  }
+
   @Get('verify/:token')
   async verifyUserEmail(@Param('token') token: string) {
     const result = await this.authService.verifyEmail(token);
@@ -54,15 +65,6 @@ export class AuthController {
         : 'Verification failed. Invalid or expired token.',
     };
   }
-
-  // @UseGuards(AuthenticationGuard)
-  // @Post('complete-profile')
-  // async completeProfile(
-  //   @Body() profileData: CompleteProfiledto,
-  //   @Req() req,
-  // ) {
-  //   return this.authService.completeProfile(profileData, req.userId);
-  // }
   //validation
   @Get('reset-password')
   async validateResetToken(@Query('token') token: string) {
@@ -76,6 +78,7 @@ export class AuthController {
     }
     return { message: 'Token is valid', token };
   }
+
   @Post('refresh')
   async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
     const tokens = await this.authService.refreshTokens(
@@ -100,6 +103,7 @@ export class AuthController {
   @ApiOperation({
     summary: 'Used when user forget password and send an reset email  ',
   })
+  
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     this.authService.forgotPassword(forgotPasswordDto.email);
@@ -129,4 +133,5 @@ export class AuthController {
     const tokens = await this.authService.login(credentials);
     return { message: 'Login successful.', tokens };
   }
+
 }
