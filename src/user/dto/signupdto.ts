@@ -36,7 +36,7 @@ export class SignupDto {
     message:
       "Le matricule fiscal doit être composé de 13 chiffres au format valide : XX XX XXXXXXXXXXX, où les deux premiers chiffres représentent l'année, les deux suivants le code régional, et les sept derniers le numéro unique de l'entreprise.",
   })
-  @IsNotEmpty({ message: 'registration number is required' })
+
   @IsOptional()
   registrationNumb: string;
 }

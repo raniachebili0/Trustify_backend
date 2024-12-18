@@ -7,7 +7,7 @@ export class InvoiceService {
     return new Promise((resolve, reject) => {
       Tesseract.recognize(
         imageBuffer,
-        'eng', // Language
+         'eng', // Language
         {
           logger: (m) => console.log(m), // Logging progress
         }

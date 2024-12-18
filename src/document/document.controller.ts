@@ -46,7 +46,8 @@ export class DocumentController {
     // Upload the file to the local directory
     const fileUploaded = await this.localFileService.uploadFile(file.buffer, fileName);
   
-    let totalAmount: number | null = null;
+    let totalAmount: string | null = null;
+    let iban: string | null = null;
   
     try {
       if (file.mimetype === 'application/pdf') {
@@ -55,14 +56,17 @@ export class DocumentController {
   
         const chatResponse = await this.documentService.getTotalAmountFromAzureOpenAI(extractedText);
   
-        totalAmount = parseFloat(chatResponse?.match(/[\d,]+\.\d{2}/)?.[0]?.replace(',', '') || '0');
+        totalAmount = chatResponse.totalAmount;
+        iban = chatResponse.iban;
+        
       } else if (file.mimetype.startsWith('image/')) {
         const tesseractResult = await Tesseract.recognize(file.buffer, 'eng');
         const extractedText = tesseractResult.data.text;
   
         const chatResponse = await this.documentService.getTotalAmountFromAzureOpenAI(extractedText);
   
-        totalAmount = parseFloat(chatResponse?.match(/[\d,]+\.\d{2}/)?.[0]?.replace(',', '') || '0');
+        totalAmount = chatResponse.totalAmount?.match(/[\d,]+\.\d{2}/)?.[0]?.replace(',', '') || '0';
+        iban = chatResponse.iban?.match(/[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}/)?.[0] || 'Not Found';
       } else {
         throw new BadRequestException('Only PDF and image files are supported');
       }
@@ -78,6 +82,7 @@ export class DocumentController {
       url: fileUploaded.relativePath, // Save relative path here
       userId: userId,
       totalAmount: totalAmount,
+      Accontenumber: iban,
     });
   
     // Return a response with the file metadata
@@ -85,7 +90,14 @@ export class DocumentController {
       message: 'File uploaded successfully',
       file: fileUploaded.relativePath, // Return relative path for the response
       totalAmount: totalAmount,
+      iban: iban,
     };
+  }
+
+  @Get('getallDoc')
+  async findAll(@Req() req) : Promise<UploadedFileModel[]>{
+    const userIdFromToken = req.userId;
+    return this.documentService.findAll(userIdFromToken);
   }
   
   /*
@@ -94,10 +106,7 @@ export class DocumentController {
     return this.documentService.create(createDocumentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.documentService.findAll();
-  }
+  
 
   @Get(':id')
   findOne(@Param('id') id: string) {

@@ -35,13 +35,12 @@ import { AuthorizationGuard } from 'src/guards/authorization.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  
   @Post('user')
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.create(createUserDto);
   }
-  @Permissions({ resource: Resource.USERS, actions: [Action.READ] }) 
-  @UseGuards(AuthorizationGuard) 
-  @UseGuards(AuthenticationGuard)
+
   @Get('list')
   async findAll(): Promise<User[]> {
     return await this.userService.findAll();
@@ -53,16 +52,23 @@ export class UserController {
     return await this.userService.findOne(req.userId); // Fetch logged-in user's data
   }
   @UseGuards(AuthenticationGuard)
-  @Patch('profile')
+  @Patch('update')
   async update(
     @Req() req,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return await this.userService.update(req.userId, updateUserDto); // Update logged-in user
   }
-  @Permissions({ resource: Resource.USERS, actions: [Action.DELETE] })
-  @UseGuards(AuthorizationGuard)
-  @UseGuards(AuthenticationGuard)
+
+
+  @Patch(':userId/update')
+  async updateUser(
+    @Param('userId') userId: string, // Accept user ID as a parameter
+    @Body() updateUserDto: UpdateUserDto, // Accept updated data
+  ): Promise<User> {
+    return await this.userService.update(userId, updateUserDto); // Update specified user
+  }
+  
   @Delete(':userId')
 async remove(@Param('userId') userId: string): Promise<{ message: string }> {
   try {

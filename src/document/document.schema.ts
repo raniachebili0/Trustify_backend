@@ -15,7 +15,7 @@ export class UploadedFileModel {
     totalAmount : string;
 
     @Prop()
-    iban : string;
+    Accontenumber : string;
 
 
     @Prop()
