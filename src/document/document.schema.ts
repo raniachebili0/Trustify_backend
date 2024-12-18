@@ -13,7 +13,14 @@ export class UploadedFileModel {
     url: string;
     @Prop()
     totalAmount : string;
-   
+
+    @Prop()
+    Accontenumber : string;
+
+
+    @Prop()
+    fileId : string;
+
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
      userId: string ;
 }

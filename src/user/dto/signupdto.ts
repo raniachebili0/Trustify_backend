@@ -43,6 +43,9 @@ export class SignupDto {
 
 
 
+
+
+
 export class SignupResponseDto {
   @ApiProperty({ description: 'The email of company' })
   email: string;

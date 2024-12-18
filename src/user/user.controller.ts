@@ -35,6 +35,7 @@ import { AuthorizationGuard } from 'src/guards/authorization.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  
   @Post('user')
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.create(createUserDto);
@@ -52,7 +53,7 @@ export class UserController {
   async findOne(@Req() req): Promise<User> {
     return await this.userService.findOne(req.userId); // Fetch logged-in user's data
   }
-  @UseGuards(AuthenticationGuard)
+
   @Patch('profile')
   async update(
     @Req() req,
@@ -60,9 +61,16 @@ export class UserController {
   ): Promise<User> {
     return await this.userService.update(req.userId, updateUserDto); // Update logged-in user
   }
-  @Permissions({ resource: Resource.USERS, actions: [Action.DELETE] })
-  @UseGuards(AuthorizationGuard)
-  @UseGuards(AuthenticationGuard)
+
+
+  @Patch(':userId/update')
+  async updateUser(
+    @Param('userId') userId: string, // Accept user ID as a parameter
+    @Body() updateUserDto: UpdateUserDto, // Accept updated data
+  ): Promise<User> {
+    return await this.userService.update(userId, updateUserDto); // Update specified user
+  }
+  
   @Delete(':userId')
 async remove(@Param('userId') userId: string): Promise<{ message: string }> {
   try {

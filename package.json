@@ -31,6 +31,7 @@
     "@nestjs/mongoose": "^10.1.0",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.13",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/swagger": "^8.0.7",
     "axios": "^1.7.8",
     "bcrypt": "^5.1.1",

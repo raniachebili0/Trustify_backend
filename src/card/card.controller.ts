@@ -82,10 +82,16 @@ async addCreditCard(
     // Fetch cards for the authenticated user directly
     return await this.cardService.findOneCard(userIdFromToken);
   }
+
+  
+  @Get(':userId')
+  async findCardbyusrId(@Param('userId') userId: string): Promise<Card | null> {
+   // Extract userId from the JWT token
+
+    // Fetch cards for the authenticated user directly
+    return await this.cardService.findOneCard(userId);
+  }
   
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cardService.findOne(id);
-  }
+
 }

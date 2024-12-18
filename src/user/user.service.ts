@@ -24,7 +24,6 @@ export class UserService {
       .select('-password -_id -isVerified') // Exclude password, _id, and isVerified fields
       .populate({ path: 'roleId', select: 'name permissions' }) // Populate specific fields
       .exec();
-      console.log(user);
 
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found`);

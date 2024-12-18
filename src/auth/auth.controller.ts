@@ -8,7 +8,6 @@ import {
   Put,
   Query,
   Req,
-  Res,
   UnauthorizedException,
   UseGuards,
   UseInterceptors,
@@ -41,6 +40,7 @@ export class AuthController {
     description: 'account created ',
     type: SignupResponseDto,
   })
+ 
  
   @Post('signup')
   async signUp(@Body() signupData: SignupDto) {
@@ -79,6 +79,7 @@ export class AuthController {
     return { message: 'Token is valid', token };
   }
 
+
   @Post('refresh')
   async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
     const tokens = await this.authService.refreshTokens(
@@ -103,6 +104,7 @@ export class AuthController {
   @ApiOperation({
     summary: 'Used when user forget password and send an reset email  ',
   })
+  
   
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
@@ -133,5 +135,6 @@ export class AuthController {
     const tokens = await this.authService.login(credentials);
     return { message: 'Login successful.', tokens };
   }
+
 
 }

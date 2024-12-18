@@ -1,39 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { BlobServiceClient } from '@azure/storage-blob'; // Azure SDK for Blob Storage
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
-export class AzureBlobService {
-  private readonly containerName = process.env.CONTAINER_NAME; // Replace this with your actual container name
-  private readonly connectionString = process.env.CONNECTION_STRING
+export class LocalFileService {
+  private readonly uploadDirectory = path.join(__dirname, '..', '..', 'uploads'); // Local upload directory
 
-  // Get the BlobServiceClient to interact with Azure Blob Storage
-  private getBlobServiceClient(): BlobServiceClient {
-    return BlobServiceClient.fromConnectionString(this.connectionString);
+  constructor() {
+    // Check if the upload directory exists, otherwise create it
+    if (!fs.existsSync(this.uploadDirectory)) {
+      fs.mkdirSync(this.uploadDirectory, { recursive: true });
+    }
   }
 
   /**
-   * Uploads a file to Azure Blob Storage.
-   * @param fileBuffer The buffer of the file to be uploaded.
-   * @param fileName The name of the file in Azure Blob Storage.
-   * @returns The blob ID (name) and URL of the uploaded file.
+   * Uploads a file to the local server directory.
+   * @param fileBuffer The content of the file as a buffer.
+   * @param fileName The name of the file.
+   * @returns The file ID (name) and its relative path.
    */
-  async uploadFile(fileBuffer: Buffer, fileName: string): Promise<{ blobId: string; url: string }> {
-    // Get the client for interacting with the container
-    const blobServiceClient = this.getBlobServiceClient();
-    const containerClient = blobServiceClient.getContainerClient(this.containerName);
+  async uploadFile(fileBuffer: Buffer, fileName: string): Promise<{ fileId: string; relativePath: string }> {
+    try {
+      // Full path to store the file
+      const filePath = path.join(this.uploadDirectory, fileName);
 
-    // Create a blob client to interact with a specific file (blob) in the container
-    const blobClient = containerClient.getBlockBlobClient(fileName);
+      // Write the file to the file system
+      await fs.promises.writeFile(filePath, fileBuffer);
 
-    // Upload the file to Azure Blob Storage
-    await blobClient.uploadData(fileBuffer, {
-      blobHTTPHeaders: { blobContentType: 'application/octet-stream' }, // Set appropriate MIME type for the file
-    });
-
-    // Return the blob ID and URL of the uploaded file
-    return {
-      blobId: fileName,
-      url: blobClient.url, // This is the URL of the uploaded file
-    };
+      // Return file metadata (use relative path)
+      return {
+        fileId: fileName, // File ID is the filename
+        relativePath: path.join('uploads', fileName), // Relative path for database storage
+      };
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw new Error('Unable to upload the file.');
+    }
   }
 }

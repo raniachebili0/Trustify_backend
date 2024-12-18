@@ -20,6 +20,7 @@ import { RefreshToken } from './schemas/refresh-token.schema';
 import { nanoid } from 'nanoid';
 import { ResetToken } from './schemas/reset-token.schema';
 import { userInfo } from 'os';
+import { userInfo } from 'os';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +35,7 @@ export class AuthService {
     private ResetTokenModel: Model<ResetToken>,
   ) {}
   async signupUser(signupData: SignupDto) {
+  async signupUser(signupData: SignupDto) {
     const { email, password, registrationNumb, Companyname } = signupData;
 
     // Check if email is already in use
@@ -43,10 +45,23 @@ export class AuthService {
     }
 
     // Hash password before saving
+
+    // Hash password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate verification token and expiration time
+
+    // Generate verification token and expiration time
     const verificationToken = uuidv4();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours expiration
+
+    // Get the 'user' role reference
+    const role = await this.rolesService.getRoleByName('user');
+    if (!role) {
+      throw new BadRequestException('User role not found');
+    }
+
+    // Create a new user with the roleId assigned
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours expiration
 
     // Get the 'user' role reference
@@ -65,12 +80,39 @@ export class AuthService {
       verificationToken,
       expiresAt,
       roleId: role._id, // Assign the role's ObjectId
+      roleId: role._id, // Assign the role's ObjectId
     });
+
+    // Send email verification
 
     // Send email verification
     await this.mailService.sendEmailVerification(email, verificationToken);
 
     return { message: 'Check your email to verify your account' };
+
+    return { message: 'Check your email to verify your account' };
+  }
+  async signupAdmin(signupData: SignupDto) {
+    const { email, password, name } = signupData;
+
+    // Check if email is already in use
+    const emailInUse = await this.UserModel.findOne({ email });
+    if (emailInUse) {
+      throw new BadRequestException('Email already in use');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const adminRole = await this.rolesService.getRoleByName('admin');
+    // Create a new admin
+    const admin = await this.UserModel.create({
+      name,
+      email,
+      password: hashedPassword,
+      roleId: adminRole._id, // Assign the admin role
+      isVerified: true, // Admins are verified by default
+    });
+
+    return { message: 'Admin account created successfully' };
   }
   async signupAdmin(signupData: SignupDto) {
     const { email, password, name } = signupData;
@@ -282,6 +324,8 @@ export class AuthService {
     const role = await this.rolesService.getRoleById(user.roleId.toString());
     return role.permissions;
   }
+
+  
 
   
 }
