@@ -20,7 +20,7 @@ import { RefreshToken } from './schemas/refresh-token.schema';
 import { nanoid } from 'nanoid';
 import { ResetToken } from './schemas/reset-token.schema';
 import { userInfo } from 'os';
-import { userInfo } from 'os';
+
 
 @Injectable()
 export class AuthService {
@@ -34,7 +34,7 @@ export class AuthService {
     @InjectModel(ResetToken.name)
     private ResetTokenModel: Model<ResetToken>,
   ) {}
-  async signupUser(signupData: SignupDto) {
+  
   async signupUser(signupData: SignupDto) {
     const { email, password, registrationNumb, Companyname } = signupData;
 
@@ -61,14 +61,10 @@ export class AuthService {
       throw new BadRequestException('User role not found');
     }
 
-    // Create a new user with the roleId assigned
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours expiration
+  
 
-    // Get the 'user' role reference
-    const role = await this.rolesService.getRoleByName('user');
-    if (!role) {
-      throw new BadRequestException('User role not found');
-    }
+   
+   
 
     // Create a new user with the roleId assigned
     const user = await this.UserModel.create({
@@ -79,8 +75,8 @@ export class AuthService {
       isVerified: false,
       verificationToken,
       expiresAt,
-      roleId: role._id, // Assign the role's ObjectId
-      roleId: role._id, // Assign the role's ObjectId
+      roleId: role._id, 
+      
     });
 
     // Send email verification
@@ -90,30 +86,9 @@ export class AuthService {
 
     return { message: 'Check your email to verify your account' };
 
-    return { message: 'Check your email to verify your account' };
+   
   }
-  async signupAdmin(signupData: SignupDto) {
-    const { email, password, name } = signupData;
-
-    // Check if email is already in use
-    const emailInUse = await this.UserModel.findOne({ email });
-    if (emailInUse) {
-      throw new BadRequestException('Email already in use');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const adminRole = await this.rolesService.getRoleByName('admin');
-    // Create a new admin
-    const admin = await this.UserModel.create({
-      name,
-      email,
-      password: hashedPassword,
-      roleId: adminRole._id, // Assign the admin role
-      isVerified: true, // Admins are verified by default
-    });
-
-    return { message: 'Admin account created successfully' };
-  }
+ 
   async signupAdmin(signupData: SignupDto) {
     const { email, password, name } = signupData;
 
