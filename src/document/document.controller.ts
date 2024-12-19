@@ -31,7 +31,9 @@ export class DocumentController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File, @Req() req) {
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File, @Req() req,
+    @Body('type') type: string ) {
     const userId = req.userId; // Extract authenticated user
     if (!userId) {
       throw new UnauthorizedException('User not authenticated');
@@ -83,6 +85,7 @@ export class DocumentController {
       userId: userId,
       totalAmount: totalAmount,
       Accontenumber: iban,
+      typeDoc :type ,
     });
   
     // Return a response with the file metadata
@@ -91,6 +94,7 @@ export class DocumentController {
       file: fileUploaded.relativePath, // Return relative path for the response
       totalAmount: totalAmount,
       iban: iban,
+      type :type ,
     };
   }
 

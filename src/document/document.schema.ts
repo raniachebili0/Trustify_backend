@@ -23,6 +23,10 @@ export class UploadedFileModel {
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
      userId: string ;
+
+     @Prop()
+     typeDoc : string;
+     
 }
 
 
