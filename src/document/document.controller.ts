@@ -50,7 +50,7 @@ export class DocumentController {
   
     let totalAmount: string | null = null;
     let iban: string | null = null;
-  
+    
     try {
       if (file.mimetype === 'application/pdf') {
         const pdfData = await pdfParse(file.buffer);
@@ -86,6 +86,7 @@ export class DocumentController {
       totalAmount: totalAmount,
       Accontenumber: iban,
       typeDoc :type ,
+      dateDeCreation :  new Date().toISOString(), 
     });
   
     // Return a response with the file metadata
@@ -95,6 +96,7 @@ export class DocumentController {
       totalAmount: totalAmount,
       iban: iban,
       type :type ,
+      date : new Date().toISOString(), 
     };
   }
 

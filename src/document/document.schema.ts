@@ -26,8 +26,18 @@ export class UploadedFileModel {
 
      @Prop()
      typeDoc : string;
+
+
+     @Prop()
+
+     dateDeCreation : Date;
+     
      
 }
 
 
 export const UploadedFileModelSchema = SchemaFactory.createForClass(UploadedFileModel);
+function Column(arg0: string): (target: UploadedFileModel, propertyKey: "dateDeCreation") => void {
+    throw new Error("Function not implemented.");
+}
+
