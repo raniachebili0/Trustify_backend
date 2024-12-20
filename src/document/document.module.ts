@@ -7,6 +7,8 @@ import { UploadedFileModel, UploadedFileModelSchema } from './document.schema';
 import { InvoiceService } from 'src/services/InvoiceService';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { BankingService } from 'src/services/BankingService';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports:[
@@ -17,8 +19,8 @@ import { join } from 'path';
     MongooseModule.forFeature([{
     name: UploadedFileModel.name,
     schema: UploadedFileModelSchema
-  }]),],
+  }]), HttpModule],
   controllers: [DocumentController],
-  providers: [DocumentService,LocalFileService,InvoiceService],
+  providers: [DocumentService,LocalFileService,InvoiceService,BankingService],
 })
 export class DocumentModule {}
